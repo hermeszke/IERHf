@@ -1,9 +1,9 @@
 MAS domestic_robot {
     infrastructure: Centralised
-    
+
      environment: env.ParkController(gui)
-     agents: 	metalDump; plasticDump; paperDump;vacuumAgent;
-            
+     agents: 	metalDump; plasticDump; paperDump; vacuumAgent;
+
     aslSourcePath:
 		"src/asl";
 }

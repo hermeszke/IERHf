@@ -3,6 +3,7 @@ import jason.asSyntax.*;
 import jason.environment.Environment;
 import jason.environment.grid.Location;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 
 
 public class ParkController extends Environment{
@@ -10,6 +11,7 @@ public class ParkController extends Environment{
 	 static Logger logger = Logger.getLogger(ParkController.class.getName());
 
 	    ParkModel model; // the model of the grid
+			ParkView view;
 
 	    @Override
 	    public void init(String[] args) {
@@ -17,12 +19,18 @@ public class ParkController extends Environment{
 
 	       // if (args.length == 1 && args[0].equals("gui")) {
 	            ParkView view  = new ParkView(model);
-	            model.setView(view);
+	           // model.setView(view);
 	      //  }
+
+				
+				JFrame f = new JFrame("Park cleaners");
+				f.setBounds(30, 30, 25 * 25 + 15, 25 * 25 + 38);
+				f.getContentPane().add(view);
+    		f.setVisible(true);
 
 	        updatePercepts();
 	    }
-	    
+
 	    void updatePercepts() {
 	    	clearPercepts("paperDump");
 	    	clearPercepts("metalDumpt");

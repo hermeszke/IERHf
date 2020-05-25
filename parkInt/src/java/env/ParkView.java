@@ -4,57 +4,60 @@ import jason.environment.grid.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import javax.swing.JPanel;
+import env.ParkModel.CellType;
 
-public class ParkView extends GridWorldView {
+public class ParkView extends JPanel {
 
-	ParkModel pmodel;
-	public ParkView(ParkModel model) {
-		super(model, "Park Cleaner", 700);
-		// TODO Auto-generated constructor stub
-		pmodel = model;
-        defaultFont = new Font("Arial", Font.BOLD, 16); // change default font
-        setVisible(true);
-        repaint();
+	private int parkWidth, parkHeight, cellLength;
+	ParkModel model;
+	Color grassColor, obstacleColor, plasticGarbColor, metalGarbColor, paperGarbColor;
+	Color vacuumAgColor, metalDumpColor, paperDumpColor, plasticDumpColor;
+
+	public ParkView(ParkModel _model) {
+		grassColor = new Color(11, 102, 35);
+		obstacleColor = new Color(101, 67, 33);
+		plasticGarbColor = new Color(219, 219, 72);
+		metalGarbColor = new Color(105, 105, 105);
+		paperGarbColor = new Color(0, 0, 150);
+		vacuumAgColor = Color.black;
+		metalDumpColor = Color.gray;
+		paperDumpColor = Color.blue;
+		plasticDumpColor = Color.yellow;
+		model = _model;
+		parkWidth = model.getWidth();
+		parkHeight = model.getHeight();
+		cellLength = 25;
 	}
-	
-	@Override
-    public void draw(Graphics g, int x, int y, int object) {
-        super.drawAgent(g, x, y, Color.GREEN, 0);
-        super.drawAgent(g, x, y, Color.GREEN, 1);
-        super.drawAgent(g, x, y, Color.blue, 2);
-        super.drawAgent(g, x, y, Color.blue,3);
-        
-        repaint();
-    }
 
-    @Override
-    public void drawAgent(Graphics g, int x, int y, Color c, int id) {
-        switch (id) {
-        case 0:
-       	 	c = Color.yellow;
-            super.drawAgent(g, x, y, c, -1);
-            g.setColor(Color.black);
-            super.drawString(g, x, y, defaultFont, "M");
-            break;
-        case 1:
-       	 	c = Color.green;
-            super.drawAgent(g, x, y, c, -1);
-            g.setColor(Color.black);
-            super.drawString(g, x, y, defaultFont, "Pl");
-            break;
-        case 2:
-        	c = Color.red;
-            super.drawAgent(g, x, y, c, -1);
-            g.setColor(Color.black);
-            super.drawString(g, x, y, defaultFont, "Pa");
-        	break;
-	    default:
-	    	c = Color.black;
-	        super.drawAgent(g, x, y, c, -1);
-	        g.setColor(Color.white);
-	        super.drawString(g, x, y, defaultFont, "VC");
-	    	break;
-	    }
-    }
+	protected void paintComponent(Graphics g) {
+		CellType cellToDraw;
+		for(int y = 0; y < parkHeight; ++y){
+			for(int x = 0; x < parkWidth; ++x){
+				cellToDraw = model.getCellType(x, y);
+				g.setColor(getCellColor(cellToDraw));
+				g.fillRect(x * cellLength, y * cellLength, cellLength, cellLength);
+			}
+		}
+	}
+
+	private Color getCellColor(CellType ct){
+		switch(ct){
+			case EMPTY:
+				return grassColor;
+			case PLASTICGARB:
+				return plasticGarbColor;
+			case METALGARB:
+				return metalGarbColor;
+			case PAPERGARB:
+				return paperGarbColor;
+			case OBSTACLE:
+				return obstacleColor;
+			default:
+				return Color.cyan;
+		}
+	}
+
+	//TODO: Agent drawing
 
 }
