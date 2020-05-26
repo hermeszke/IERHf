@@ -1,15 +1,26 @@
 package env;
 import jason.environment.grid.*;
 
+import java.util.List;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import env.ParkModel.CellType;
+import env.ParkModel.AgentType;
+
+import java.util.logging.Logger;
 
 public class ParkView extends JPanel {
+	static Logger logger = Logger.getLogger(ParkController.class.getName());
 
-	private int parkWidth, parkHeight, cellLength;
+	private class AgentDrawInfo{
+		int x, y;
+		Color agentColor;
+		String agentLabel;
+	}
+
+	private int parkWidth, parkHeight, cellLength, agentDiameter;
 	ParkModel model;
 	Color grassColor, obstacleColor, plasticGarbColor, metalGarbColor, paperGarbColor;
 	Color vacuumAgColor, metalDumpColor, paperDumpColor, plasticDumpColor;
@@ -27,7 +38,8 @@ public class ParkView extends JPanel {
 		model = _model;
 		parkWidth = model.getWidth();
 		parkHeight = model.getHeight();
-		cellLength = 25;
+		cellLength = 30;
+		agentDiameter = 30;
 	}
 
 	protected void paintComponent(Graphics g) {
@@ -38,6 +50,11 @@ public class ParkView extends JPanel {
 				g.setColor(getCellColor(cellToDraw));
 				g.fillRect(x * cellLength, y * cellLength, cellLength, cellLength);
 			}
+		}
+
+		List<Integer> agentIDs = model.getAgentIDs();
+		for(int i : agentIDs){
+			drawAgent(g, i);
 		}
 	}
 
@@ -58,6 +75,51 @@ public class ParkView extends JPanel {
 		}
 	}
 
-	//TODO: Agent drawing
+	private AgentDrawInfo getAgentDrawInfo(int id){
+		AgentType at = model.getAgentType(id);
+		AgentDrawInfo adi = new AgentDrawInfo();
+		Location loc = model.getAgPos(id);
+
+		adi.x = loc.x * cellLength;
+		adi.y = loc.y * cellLength;
+
+		Color agentColor;
+		String label;
+		switch(at){
+			case PLASTIC_BIN:
+				agentColor = Color.yellow;
+				label = "PL";
+				break;
+			case METAL_BIN:
+				agentColor = Color.gray;
+				label = "ME";
+				break;
+			case PAPER_BIN:
+				agentColor = Color.blue;
+				label = "PA";
+				break;
+			case VACUUM:
+				agentColor = Color.black;
+				label = "VA";
+				break;
+			default:
+				agentColor = Color.cyan;
+				label = "";
+				break;
+		}
+
+		adi.agentColor = agentColor;
+		adi.agentLabel = label;
+
+		return adi;
+	}
+
+	private void drawAgent(Graphics g, int id){
+		AgentDrawInfo adi = getAgentDrawInfo(id);
+		g.setColor(adi.agentColor);
+		g.fillOval(adi.x, adi.y, agentDiameter, agentDiameter);
+		g.setColor(Color.white);
+		g.drawString(adi.agentLabel, adi.x +cellLength / 4 + 1, adi.y + cellLength / 2 + 5);
+	}
 
 }

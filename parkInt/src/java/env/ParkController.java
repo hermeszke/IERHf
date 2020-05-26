@@ -22,14 +22,21 @@ public class ParkController extends Environment{
 	           // model.setView(view);
 	      //  }
 
-				
+
 				JFrame f = new JFrame("Park cleaners");
-				f.setBounds(30, 30, 25 * 25 + 15, 25 * 25 + 38);
+				f.setBounds(30, 30, 25 * 30 + 15, 25 * 30 + 38);
 				f.getContentPane().add(view);
     		f.setVisible(true);
 
 	        updatePercepts();
 	    }
+
+			@Override
+    public boolean executeAction(String ag, Structure action){
+			logger.info(ag + " is doing: " + action);
+
+			return true;
+		}
 
 	    void updatePercepts() {
 	    	clearPercepts("paperDump");

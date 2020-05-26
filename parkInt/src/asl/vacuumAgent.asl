@@ -7,3 +7,8 @@
 
 /* Plans */
 
+!start.
+
++!start : true
+  <-  .print("vacuum started.")
+      printAgs.
