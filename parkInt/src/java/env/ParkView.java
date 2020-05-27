@@ -8,6 +8,8 @@ import java.awt.Graphics;
 public class ParkView extends GridWorldView {
 
 	ParkModel pmodel;
+	int cntr = 0;
+	
 	public ParkView(ParkModel model) {
 		super(model, "Park Cleaner", 700);
 		// TODO Auto-generated constructor stub
@@ -16,20 +18,41 @@ public class ParkView extends GridWorldView {
         setVisible(true);
         repaint();
 	}
-	
 	@Override
     public void draw(Graphics g, int x, int y, int object) {
-        super.drawAgent(g, x, y, Color.GREEN, 0);
-        super.drawAgent(g, x, y, Color.GREEN, 1);
-        super.drawAgent(g, x, y, Color.blue, 2);
-        super.drawAgent(g, x, y, Color.blue,3);
-        
-        repaint();
+    	g.setColor(Color.green);
+        switch (object) {
+        case ParkModel.PLAST:
+    		drawGarb(g, x, y, 64);
+	        break;
+        case ParkModel.PAPER:
+        	drawGarb(g, x, y, 32);
+	        break;
+        case ParkModel.METAL:
+        	drawGarb(g, x, y, 16);
+	        break;}
     }
+	
+	public void drawGarb(Graphics g, int x, int y, int t) {
+            switch (t) {
+            case 64:
+    	        g.setColor(Color.yellow);
+    	        drawString(g, x, y, defaultFont,"Pl");
+    	        break;
+            case 32:
+    	        g.setColor(Color.green);
+    	        drawString(g, x, y, defaultFont,"Pa");
+    	        break;
+            case 16:
+    	        g.setColor(Color.red);
+    	        drawString(g, x, y, defaultFont,"M");
+    	        break;
+            }
+        }
 
     @Override
     public void drawAgent(Graphics g, int x, int y, Color c, int id) {
-        switch (id) {
+    	switch (id) {
         case 0:
        	 	c = Color.yellow;
             super.drawAgent(g, x, y, c, -1);
@@ -56,5 +79,6 @@ public class ParkView extends GridWorldView {
 	    	break;
 	    }
     }
+    
 
 }
