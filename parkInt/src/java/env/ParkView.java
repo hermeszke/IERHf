@@ -15,12 +15,12 @@ public class ParkView extends GridWorldView {
 		// TODO Auto-generated constructor stub
 		pmodel = model;
         defaultFont = new Font("Arial", Font.BOLD, 16); // change default font
+        setBackground(Color.green);
         setVisible(true);
         repaint();
 	}
 	@Override
     public void draw(Graphics g, int x, int y, int object) {
-    	g.setColor(Color.green);
         switch (object) {
         case ParkModel.PLAST:
     		drawGarb(g, x, y, 64);
@@ -36,15 +36,15 @@ public class ParkView extends GridWorldView {
 	public void drawGarb(Graphics g, int x, int y, int t) {
             switch (t) {
             case 64:
-    	        g.setColor(Color.yellow);
+    	        g.setColor(Color.green);
     	        drawString(g, x, y, defaultFont,"Pl");
     	        break;
             case 32:
-    	        g.setColor(Color.green);
+    	        g.setColor(Color.blue);
     	        drawString(g, x, y, defaultFont,"Pa");
     	        break;
             case 16:
-    	        g.setColor(Color.red);
+    	        g.setColor(Color.yellow);
     	        drawString(g, x, y, defaultFont,"M");
     	        break;
             }
@@ -66,7 +66,7 @@ public class ParkView extends GridWorldView {
             super.drawString(g, x, y, defaultFont, "Pl");
             break;
         case 2:
-        	c = Color.red;
+        	c = Color.blue;
             super.drawAgent(g, x, y, c, -1);
             g.setColor(Color.black);
             super.drawString(g, x, y, defaultFont, "Pa");

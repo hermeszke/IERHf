@@ -48,15 +48,26 @@ public class ParkController extends Environment{
 	        Literal pos3 = Literal.parseLiteral("my_pos(" + vacuumAgent1.x + "," + vacuumAgent1.y + ")");
 	        Literal pos4 = Literal.parseLiteral("my_pos(" + vacuumAgent2.x + "," + vacuumAgent2.y + ")");
 	        Literal pos5 = Literal.parseLiteral("my_pos(" + vacuumAgent3.x + "," + vacuumAgent3.y + ")");
-
+	        
+	        
 	        addPercept("vacuumAgent1",pos3);
 	        addPercept("vacuumAgent2",pos4);
 	        addPercept("vacuumAgent3",pos5);
 	        System.out.println(" GarbageList" + model.garbageLoc);
-	        int tmp = model.isThisGarbage(vacuumAgent1);
-	        if(tmp != -1) {
-                vc1gb = Literal.parseLiteral("found("+tmp+")");
+	        int tmp1 = model.isThisGarbage(vacuumAgent1);
+	        int tmp2 = model.isThisGarbage(vacuumAgent2);
+	        int tmp3 = model.isThisGarbage(vacuumAgent3);
+	        if(tmp1 != -1) {
+                vc1gb = Literal.parseLiteral("found("+tmp1+")");
                 addPercept("vacuumAgent1",vc1gb);
+            }
+	        if(tmp1 != -1) {
+                vc1gb = Literal.parseLiteral("found("+tmp2+")");
+                addPercept("vacuumAgent2",vc1gb);
+            }
+	        if(tmp1 != -1) {
+                vc1gb = Literal.parseLiteral("found("+tmp3+")");
+                addPercept("vacuumAgent3",vc1gb);
             }
 	    }
 	    
@@ -66,7 +77,6 @@ public class ParkController extends Environment{
 	        try {
 	    	 System.out.println("["+ag+"] doing: "+action);
 	    	 if(action.equals(nc)) {
-
 	             if(ag.equals("vacuumAgent1")) {
 	            	 model.movePerimeter(model.getAgentByName(ag));
 	             } else if(ag.equals("vacuumAgent2")) {
@@ -107,10 +117,10 @@ public class ParkController extends Environment{
 	             if(ag.equals("vacuumAgent1")) {
 	            	 model.moveTowards(x, y, model.getAgentByName(ag));
 	             }
-	             else if(ag.equals("vacuumAgent1")) {
+	             else if(ag.equals("vacuumAgent2")) {
 	            	 model.moveTowards(x, y, model.getAgentByName(ag));
 	             }
-	             else if(ag.equals("vacuumAgent1")) {
+	             else if(ag.equals("vacuumAgent3")) {
 	            	 model.moveTowards(x, y, model.getAgentByName(ag));
 	             }
 	             

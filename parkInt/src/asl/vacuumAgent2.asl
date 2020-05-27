@@ -1,9 +1,10 @@
-// Agent vacuumAgent2 in project parkInt
+// Agent sample_agent in project parkInt
 
 /* Initial beliefs and rules */
-pos(boss,0,12).
+pos(metal,0,0).
+pos(plast,0,12).
+pos(paper,0,24).
 checking_cells.
-resource_needed(16).
 
 /* Initial goals */
 +my_pos(X,Y)
@@ -11,13 +12,25 @@ resource_needed(16).
    <- !check_for_resources.
    
 +!check_for_resources
-   :  resource_needed(R) & found(R)
+   :  found(16)
    <- !stop_checking;
-      !take(R,boss);
+      !take(R,metal);
+      !continue_mine.
+      
++!check_for_resources
+   :  found(32)
+   <- !stop_checking;
+      !take(R,paper);
+      !continue_mine.
+      
++!check_for_resources
+   :  found(64)
+   <- !stop_checking;
+      !take(R,plast);
       !continue_mine.
       
  +!check_for_resources
-   :  resource_needed(R) & not found(R)
+   :  not found(16) & not found(32) & not found(64)
    <- move_to(next_cell).
    
  +!stop_checking : true
@@ -54,3 +67,4 @@ resource_needed(16).
 +building_finished : true
    <- .drop_all_desires;
       !go(boss).*/
+

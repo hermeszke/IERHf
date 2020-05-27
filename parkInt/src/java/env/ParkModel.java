@@ -45,6 +45,8 @@ public class ParkModel extends GridWorldModel {
 			cntr=typeCount;
 			int vcCnt = 1;
 			Location temp;
+			
+			//Dumps
 			temp = new Location(0,0);
 		    setAgPos(0,temp);
 		    loc.add(temp);
@@ -57,6 +59,7 @@ public class ParkModel extends GridWorldModel {
 		    setAgPos(2,temp);
 		    loc.add(temp);
 		    
+		    //Cleaners
 
 		    temp = new Location(0,0);
 		    setAgPos(3,temp);
@@ -88,12 +91,22 @@ public class ParkModel extends GridWorldModel {
 	    	agentCarries.add(0);
 	    	vcCnt++;
 		    
-	    	garbageLoc.add(new Location(3,3));
+	    	//Garbage
+	    	
+	    	garbageLoc.add(new Location(5,8));
+	    	garbType.add(ParkModel.PLAST);
+	    	add(ParkModel.PLAST,new Location(5,8));
+
+	    	garbageLoc.add(new Location(9,3));
 	    	garbType.add(ParkModel.METAL);
-	    	add(ParkModel.METAL,new Location(3,3));
+	    	add(ParkModel.METAL,new Location(9,3));
+
+	    	garbageLoc.add(new Location(16,4));
+	    	garbType.add(ParkModel.PAPER);
+	    	add(ParkModel.PAPER,new Location(16,4));
 	    	
 		    int t =0;
-		    while(garbageLoc.size()!=maxGarbage/3)
+		    while(garbageLoc.size()!=5)
 		    {
 		    	randomNumX  = ThreadLocalRandom.current().nextInt(1, 24 + 1);
 			    randomNumY = ThreadLocalRandom.current().nextInt(1, 24 + 1);
@@ -200,34 +213,17 @@ public class ParkModel extends GridWorldModel {
 	void pickGarb(int ind) {
 		Location l = getAgPos(ind);
         if (hasObject(METAL, l)) {
-            // sometimes the "picking" action doesn't work
-            // but never more than MErr times
-            if (random.nextBoolean() || nerr == MErr) {
                 remove(METAL, l);
-                nerr = 0;
     	    	agentCarries.set(ind-3,METAL);
-            } else {
-                nerr++;
-            }
         }
         else if(hasObject(PAPER, l))
         {
-        	if (random.nextBoolean() || nerr == MErr) {
                 remove(PAPER, l);
-                nerr = 0;
     	    	agentCarries.set(ind-3,PAPER);
-            } else {
-                nerr++;
-            }
         }
         else if( hasObject(PLAST, l)) {
-        	if (random.nextBoolean() || nerr == MErr) {
                 remove(PLAST, l);
-                nerr = 0;
     	    	agentCarries.set(ind-3,PLAST);
-            } else {
-                nerr++;
-            }
         }
     }
 	
@@ -250,32 +246,7 @@ public class ParkModel extends GridWorldModel {
 		return -1;
 	}
 
-/*	void removeGarbage(int ind) {
-		Location l = getAgPos(ind);
-		System.out.println("Loc:" + l + "+"  + garbageLoc);
-		for( int i = 0; i< garbageLoc.size();i++) {
-			if(garbageLoc.get(i).x == l.x && garbageLoc.get(i).y == l.y) {
-				switch(garbType.get(i)) {
-				case 16: carryingMet = true; carryingPaper = false; carryingPlast = false;
-						garbageLoc.remove(i);
-						garbType.remove(i);
-						remove(ParkModel.METAL,garbageLoc.get(i));
-						break;
-				case 32:carryingMet = false; carryingPaper = true; carryingPlast = false;
-						garbageLoc.remove(i);
-						garbType.remove(i);
-						remove(ParkModel.PAPER,garbageLoc.get(i));
-						break;
-				case 64:carryingMet = false; carryingPaper = false; carryingPlast = true;
-						garbageLoc.remove(i);
-						garbType.remove(i);
-						remove(ParkModel.PLAST,garbageLoc.get(i));
-						break;
-				}
-			}
-		}
-	}
-*/
+
 	void dropGarbage(int ind) {
 		Location l = getAgPos(ind);
 		int check = agentCarries.get(ind-3);
@@ -303,6 +274,7 @@ public class ParkModel extends GridWorldModel {
 	}
 	
 	public int isThisGarbage(Location l) {
+		System.out.println("Checking if this is garb" + l);
 		if(hasObject(METAL, l)) {
 			return METAL;
 		}

@@ -2,7 +2,8 @@ MAS domestic_robot {
     infrastructure: Centralised
     
      environment: env.ParkController
-     agents:metalDump;
+     agents:
+     		metalDump;
 			plasticDump;
 			paperDump;
 			vacuumAgent1;
