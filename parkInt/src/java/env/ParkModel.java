@@ -131,13 +131,6 @@ public class ParkModel extends GridWorldModel {
 			    	}
 			    }
 		    }
-		   /* System.out.println(loc);
-		    System.out.println(agentNameWNum);
-		    System.out.println(garbageLoc);
-		    System.out.println(garbType);
-		    for(int i = 0; i< getNbOfAgs();i++) {
-		    	System.out.println(getAgPos(i));
-		    }*/
 		    
 	}
 	
@@ -152,6 +145,7 @@ public class ParkModel extends GridWorldModel {
 		Location tmp3 = getAgPos(3);
 		Location tmp4 = getAgPos(4);
 		Location tmp5 = getAgPos(5);
+		
 		setAgPos(0, tmp0);
 		setAgPos(1, tmp1);
 		setAgPos(2, tmp2);
@@ -163,7 +157,6 @@ public class ParkModel extends GridWorldModel {
 	
 	void moveTowards(int x, int y, int ind) throws Exception {
         Location r1 = getAgPos(ind);
-        System.out.println(r1 + "+ " + ind);
         if (r1.x < x)
             r1.x++;
         else if (r1.x > x)
@@ -176,7 +169,6 @@ public class ParkModel extends GridWorldModel {
     }
 	
 	void movePerimeter(int ind) {
-		System.out.println("Index" + ind);
 		switch(ind) {
 		case 3: moveBetween(0,GSize/3-1, ind);break;
 		case 4: moveBetween(GSize/3,(2*GSize/3)-1, ind);break;
@@ -274,7 +266,6 @@ public class ParkModel extends GridWorldModel {
 	}
 	
 	public int isThisGarbage(Location l) {
-		System.out.println("Checking if this is garb" + l);
 		if(hasObject(METAL, l)) {
 			return METAL;
 		}

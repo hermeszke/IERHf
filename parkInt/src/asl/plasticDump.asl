@@ -1,7 +1,3 @@
 // Agent plasticAgent in project parkInt
 
-/* Initial beliefs and rules */
-
-/* Initial goals */
-
-/* Plans */
++trash(64) : true <- consume(plastic).

@@ -1,7 +1,3 @@
 // Agent metalAgent in project parkInt
 
-/* Initial beliefs and rules */
-
-/* Initial goals */
-
-/* Plans */
++trash(16) : true <- consume(metal).

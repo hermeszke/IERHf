@@ -16,6 +16,9 @@ public class ParkController extends Environment{
 	    public final String mr = new String("mine");
 	    public final String dr = new String("drop");
 	    public final Term nc = Literal.parseLiteral("move_to(next_cell)");
+	    public final Term cm = Literal.parseLiteral("consume(metal)");
+	    public final Term cpl = Literal.parseLiteral("consume(plastic)");
+	    public final Term cpp = Literal.parseLiteral("consume(paper)");
 	    public  Literal vc1gb;
 	    
 
@@ -31,16 +34,16 @@ public class ParkController extends Environment{
 	    }
 	    
 	    void updatePercepts() {
-	    	/*clearPercepts("paperDump");
+	    	clearPercepts("paperDump");
 	    	clearPercepts("metalDumpt");
-	    	clearPercepts("plasticDump");*/
+	    	clearPercepts("plasticDump");
 	    	clearPercepts("vacuumAgent1");
 	    	clearPercepts("vacuumAgent2");
 	    	clearPercepts("vacuumAgent3");
 
-	       /* Location metalAg = model.getAgPos(0);
+	        Location metalAg = model.getAgPos(0);
 	        Location plastAg = model.getAgPos(1);
-	        Location paperAg = model.getAgPos(2);*/
+	        Location paperAg = model.getAgPos(2);
 	        Location vacuumAgent1 = model.getAgPos(3);
 	        Location vacuumAgent2 = model.getAgPos(4);
 	        Location vacuumAgent3 = model.getAgPos(5);
@@ -53,22 +56,36 @@ public class ParkController extends Environment{
 	        addPercept("vacuumAgent1",pos3);
 	        addPercept("vacuumAgent2",pos4);
 	        addPercept("vacuumAgent3",pos5);
-	        System.out.println(" GarbageList" + model.garbageLoc);
-	        int tmp1 = model.isThisGarbage(vacuumAgent1);
-	        int tmp2 = model.isThisGarbage(vacuumAgent2);
-	        int tmp3 = model.isThisGarbage(vacuumAgent3);
-	        if(tmp1 != -1) {
-                vc1gb = Literal.parseLiteral("found("+tmp1+")");
+	        int tmp = model.isThisGarbage(vacuumAgent1);
+	        if(tmp != -1) {
+                vc1gb = Literal.parseLiteral("found("+tmp+")");
                 addPercept("vacuumAgent1",vc1gb);
             }
-	        if(tmp1 != -1) {
-                vc1gb = Literal.parseLiteral("found("+tmp2+")");
+	        tmp = model.isThisGarbage(vacuumAgent2);
+	        if(tmp != -1) {
+                vc1gb = Literal.parseLiteral("found("+tmp+")");
                 addPercept("vacuumAgent2",vc1gb);
             }
-	        if(tmp1 != -1) {
-                vc1gb = Literal.parseLiteral("found("+tmp3+")");
+	        tmp = model.isThisGarbage(vacuumAgent3);
+	        if(tmp != -1) {
+                vc1gb = Literal.parseLiteral("found("+tmp+")");
                 addPercept("vacuumAgent3",vc1gb);
             }
+	        
+	        if(model.isThisGarbage(metalAg) == model.METAL) {
+                vc1gb = Literal.parseLiteral("trash("+model.METAL+")");
+                addPercept("metalDump",vc1gb);
+	        }
+	        if(model.isThisGarbage(plastAg) == model.PLAST) {
+                vc1gb = Literal.parseLiteral("trash("+model.PLAST+")");
+                addPercept("plasticDump",vc1gb);
+	        }
+	        if(model.isThisGarbage(paperAg) == model.PAPER) {
+                vc1gb = Literal.parseLiteral("trash("+model.PAPER+")");
+                addPercept("paperDump",vc1gb);
+	        }
+	        
+	        
 	    }
 	    
 	    @Override
@@ -124,6 +141,15 @@ public class ParkController extends Environment{
 	            	 model.moveTowards(x, y, model.getAgentByName(ag));
 	             }
 	             
+	    	 }
+	    	 else if(action.getFunctor().equals(cm)) {
+	    		 model.remove(model.METAL, model.getAgPos(model.getAgentByName(ag)));
+	    	 }
+	    	 else if(action.getFunctor().equals(cpp)) {
+	    		 model.remove(model.PAPER, model.getAgPos(model.getAgentByName(ag)));
+	    	 }
+	    	 else if(action.getFunctor().equals(cpl)) {
+	    		 model.remove(model.PLAST, model.getAgPos(model.getAgentByName(ag)));
 	    	 }
 	    	 model.reInstate();
 	    	 updatePercepts();

@@ -6,9 +6,7 @@ MAS domestic_robot {
      		metalDump;
 			plasticDump;
 			paperDump;
-			vacuumAgent1;
-			vacuumAgent2;
-			vacuumAgent3;
+			vacuumAgent #3;
     aslSourcePath:
 		"src/asl";
 }
