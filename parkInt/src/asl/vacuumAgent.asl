@@ -9,27 +9,27 @@ checking_cells.
 /* Initial goals */
 +my_pos(X,Y)
    :  checking_cells
-   <- !check_for_resources.
-
-+!check_for_resources
+   <- !check_for_garbage.
+   
++!check_for_garbage
    :  found(16)
    <- !stop_checking;
       !take(R,metal);
-      !continue_mine.
-
-+!check_for_resources
+      !continue_picking.
+      
++!check_for_garbage
    :  found(32)
    <- !stop_checking;
       !take(R,paper);
-      !continue_mine.
-
-+!check_for_resources
+      !continue_picking.
+      
++!check_for_garbage
    :  found(64)
    <- !stop_checking;
       !take(R,plast);
-      !continue_mine.
-
- +!check_for_resources
+      !continue_picking.
+      
+ +!check_for_garbage
    :  not found(R)
    <- move_to(next_cell).
 
@@ -39,11 +39,11 @@ checking_cells.
       -checking_cells.
 
  +!take(R,B) : true
-   <- mine(R);
+   <- pickUp(R);
       !go(B);
       drop(R).
 
-+!continue_mine : true
++!continue_picking : true
    <- !go(back);
       -pos(back,X,Y);
       +checking_cells;
@@ -58,12 +58,3 @@ checking_cells.
       move_towards(X,Y);
       !go(Position).
 
-/* @psf[atomic]
-+!search_for(NewResource) : resource_needed(OldResource)
-   <- +resource_needed(NewResource);
-      -resource_needed(OldResource).
-
-@pbf[atomic]
-+building_finished : true
-   <- .drop_all_desires;
-      !go(boss).*/

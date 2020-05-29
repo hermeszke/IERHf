@@ -14,31 +14,26 @@ public class ParkController extends Environment{
 
 		 private final ReentrantLock lock = new ReentrantLock();
 
-			public final String mr = new String("mine");
+		public final String pu = new String("pickUp");
 	    public final String dr = new String("drop");
-			public final String generateDest = new String("generateDest");
-			public final String mightLitter = new String("mightLitter");
-			public final String walk = new String("walk");
+		public final String generateDest = new String("generateDest");
+		public final String mightLitter = new String("mightLitter");
+		public final String walk = new String("walk");
 	    public final Term nc = Literal.parseLiteral("move_to(next_cell)");
 	    public final Term cm = Literal.parseLiteral("consume(metal)");
 	    public final Term cpl = Literal.parseLiteral("consume(plastic)");
 	    public final Term cpp = Literal.parseLiteral("consume(paper)");
 	    public  Literal vc1gb;
-			public final static int HUMAN_ID = 6;
-
-
-
 
 	    ParkModel model; // the model of the grid
-			private Location humanDestination = new Location(10, 10);
-			private Random rand = new Random();
+		private Location humanDestination = new Location(10, 10);
+		private Random rand = new Random();
 
 	    @Override
 	    public void init(String[] args) {
 	        model = new ParkModel();
 	        ParkView view  = new ParkView(model);
 	        model.setView(view);
-
 	        updatePercepts();
 	    }
 
@@ -49,8 +44,8 @@ public class ParkController extends Environment{
 	    	clearPercepts("vacuumAgent1");
 	    	clearPercepts("vacuumAgent2");
 	    	clearPercepts("vacuumAgent3");
-				clearPercepts("human1");
-				clearPercepts("human2");
+			clearPercepts("human1");
+			clearPercepts("human2");
 
 	        Location metalAg = model.getAgPos(0);
 	        Location plastAg = model.getAgPos(1);
@@ -62,7 +57,6 @@ public class ParkController extends Environment{
 	        Literal pos3 = Literal.parseLiteral("my_pos(" + vacuumAgent1.x + "," + vacuumAgent1.y + ")");
 	        Literal pos4 = Literal.parseLiteral("my_pos(" + vacuumAgent2.x + "," + vacuumAgent2.y + ")");
 	        Literal pos5 = Literal.parseLiteral("my_pos(" + vacuumAgent3.x + "," + vacuumAgent3.y + ")");
-
 
 	        addPercept("vacuumAgent1",pos3);
 	        addPercept("vacuumAgent2",pos4);
@@ -96,8 +90,6 @@ public class ParkController extends Environment{
                 vc1gb = Literal.parseLiteral("trash("+model.PAPER+")");
                 addPercept("paperDump",vc1gb);
 	        }
-
-
 	    }
 
 	    @Override
@@ -114,7 +106,7 @@ public class ParkController extends Environment{
 	            	 model.movePerimeter(model.getAgentByName(ag));
 	             }
 	    	 }
-	    	 else if(action.getFunctor().equals(mr)) {
+	    	 else if(action.getFunctor().equals(pu)) {
 	             if(ag.equals("vacuumAgent1")) {
 	            	 model.pickGarb(model.getAgentByName(ag));
 	             }
@@ -182,7 +174,6 @@ public class ParkController extends Environment{
 								type = ParkModel.PAPER;
 								break;
 						 }
-
 						 model.add(type, humanLoc);
 					 }
 				 }
@@ -209,7 +200,6 @@ public class ParkController extends Environment{
 				e.printStackTrace();
 			}finally {
 			       lock.unlock();}
-	    	// repaint();
 
 	        informAgsEnvironmentChanged();
 	    	 return true;

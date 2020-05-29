@@ -31,9 +31,9 @@ public class ParkView extends GridWorldView {
         case ParkModel.METAL:
         	drawGarb(g, x, y, 16);
 	        break;
-				case ParkModel.OBSTACLE:
-					drawObstacle(g, x, y);
-				}
+		case ParkModel.OBSTACLE:
+			drawObstacle(g, x, y);
+		}
     }
 
 	public void drawObstacle(Graphics g, int x, int y) {
@@ -89,10 +89,8 @@ public class ParkView extends GridWorldView {
 			super.drawAgent(g, x, y, c, -1);
 			break;
 	    default:
-	    	c = Color.black;
+	    	c = Color.gray;
 	        super.drawAgent(g, x, y, c, -1);
-	        g.setColor(Color.white);
-	        super.drawString(g, x, y, defaultFont, "VC");
 	    	break;
 	    }
     }
