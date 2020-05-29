@@ -10,34 +10,34 @@ checking_cells.
 +my_pos(X,Y)
    :  checking_cells
    <- !check_for_resources.
-   
+
 +!check_for_resources
    :  found(16)
    <- !stop_checking;
       !take(R,metal);
       !continue_mine.
-      
+
 +!check_for_resources
    :  found(32)
    <- !stop_checking;
       !take(R,paper);
       !continue_mine.
-      
+
 +!check_for_resources
    :  found(64)
    <- !stop_checking;
       !take(R,plast);
       !continue_mine.
-      
+
  +!check_for_resources
    :  not found(R)
    <- move_to(next_cell).
-   
+
  +!stop_checking : true
    <- ?my_pos(X,Y);
       +pos(back,X,Y);
       -checking_cells.
-      
+
  +!take(R,B) : true
    <- mine(R);
       !go(B);

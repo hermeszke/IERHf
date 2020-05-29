@@ -4,6 +4,7 @@ import java.util.List;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import jason.environment.grid.GridWorldModel;
 import jason.environment.grid.Location;
@@ -14,7 +15,8 @@ public class ParkModel extends GridWorldModel {
     public static final int METAL = 16;
     public static final int PLAST = 64;
     public static final int PAPER = 32;
-	public static final int OBSTACLE = 256;
+	//public static final int OBSTACLE = 256;
+  static Logger logger = Logger.getLogger(ParkController.class.getName());
 
     private static int agentCount = 8;
     private static int maxGarbage = 10;
@@ -32,6 +34,8 @@ public class ParkModel extends GridWorldModel {
 	ArrayList<Boolean> agentDir = new ArrayList<Boolean>();
 	ArrayList<Boolean> agentIsReturning = new ArrayList<Boolean>();
 	ArrayList<Integer> agentCarries = new ArrayList<Integer>();
+  List<Location> obstacleLocations = new ArrayList<>();
+  List<Location> shouldBeAt = new ArrayList<>();
 
     private int randomNumX;
     private int randomNumY;
@@ -63,6 +67,7 @@ public class ParkModel extends GridWorldModel {
 
 		    temp = new Location(0,0);
 		    setAgPos(3,temp);
+        shouldBeAt.add(temp);
 		    loc.add(temp);
 	    	String s = "vacuumAgent";
 	    	agentNameWNum.add(s.concat(Integer.toString(vcCnt)));
@@ -73,6 +78,7 @@ public class ParkModel extends GridWorldModel {
 
 		    temp = new Location(8,0);
 		    setAgPos(4,temp);
+        shouldBeAt.add(temp);
 		    loc.add(temp);
 	    	s = "vacuumAgent";
 	    	agentNameWNum.add(s.concat(Integer.toString(vcCnt)));
@@ -83,6 +89,7 @@ public class ParkModel extends GridWorldModel {
 
 		    temp = new Location(16,0);
 		    setAgPos(5,temp);
+        shouldBeAt.add(temp);
 		    loc.add(temp);
 	    	s = "vacuumAgent";
 	    	agentNameWNum.add(s.concat(Integer.toString(vcCnt)));
@@ -107,7 +114,7 @@ public class ParkModel extends GridWorldModel {
 
 				// Set some obstacles
 				// TODO: Add more
-				add(ParkModel.OBSTACLE, new Location(5, 6));
+				addObstacle(2, 1);
 
 		    int t =0;
 		    while(garbageLoc.size()!=5)
@@ -180,15 +187,57 @@ public class ParkModel extends GridWorldModel {
 
 	void moveTowards(int x, int y, int ind) throws Exception {
         Location r1 = getAgPos(ind);
-        if (r1.x < x)
+        Location originalLocation = getAgPos(ind);
+
+        if (r1.x < x){
             r1.x++;
-        else if (r1.x > x)
+        }
+        else if (r1.x > x) {
             r1.x--;
-        if (r1.y < y)
+        }
+        if (r1.y < y){
             r1.y++;
-        else if (r1.y > y)
+        }
+        else if (r1.y > y){
             r1.y--;
+        }
+
+        // Handle if the cell is alreay occupied
+        r1 = dodgeIfOccupied(r1, originalLocation);
+
         setAgPos(ind, r1);
+    }
+
+    private Location dodgeIfOccupied(Location newLocation, Location originalLocation){
+      if(isOccupied(newLocation.x, newLocation.y)){
+        boolean xChanged = (newLocation.x == originalLocation.x);
+        boolean yChanged = (newLocation.y == originalLocation.y);
+
+        logger.info(String.format("Cell occupied."));
+        logger.info(String.format("ORIGINALY wanted to go to: (%d : %d)", newLocation.x, newLocation.y));
+        if(!xChanged && !yChanged){
+          newLocation.x = originalLocation.x;
+        }
+        else if(xChanged){
+          if((newLocation.x + 1) < (GSize - 1)){
+            newLocation.x += 1;
+          }
+          else{
+            newLocation.x -= 1;
+          }
+        }
+        else if(yChanged){
+          if((newLocation.y + 1) < (GSize - 1)){
+            newLocation.y += 1;
+          }
+          else{
+            newLocation.y -= 1;
+          }
+        }
+        logger.info(String.format("INSTEAD going to: (%d : %d)", newLocation.x, newLocation.y));
+      }
+
+      return newLocation;
     }
 
 	void movePerimeter(int ind) {
@@ -199,8 +248,18 @@ public class ParkModel extends GridWorldModel {
 		}
 	}
 
+  private Location getShouldBeAt(int id){
+    return shouldBeAt.get(id - 3);
+  }
+
 	void moveBetween(int xmin, int xmax, int ind) {
 		Location r1 = getAgPos(ind);
+    Location sr1 = getShouldBeAt(ind);
+    if(r1.x != sr1.x || r1.y != sr1.y){
+      r1.x = sr1.x;
+      r1.y = sr1.y;
+    }
+    Location startingLocation = getAgPos(ind);
 		boolean flip = agentDir.get(ind-3);
 		boolean returning = agentIsReturning.get(ind-3);
 		if(r1.x == xmin && r1.y ==0) {
@@ -223,6 +282,10 @@ public class ParkModel extends GridWorldModel {
 			agentDir.set(ind-3, true);
 			r1.y++;
 		}
+    shouldBeAt.set(ind - 3, new Location(r1.x, r1.y));
+    r1 = dodgeIfOccupied(r1, startingLocation);
+    Location asd = getShouldBeAt(ind);
+
 		setAgPos(ind, r1);
 	}
 	void pickGarb(int ind) {
@@ -288,6 +351,11 @@ public class ParkModel extends GridWorldModel {
 		}
 	}
 
+  public void addObstacle(int x, int y){
+    add(OBSTACLE, x, y);
+    obstacleLocations.add(new Location(x, y));
+  }
+
 	public int isThisGarbage(Location l) {
 		if(hasObject(METAL, l)) {
 			return METAL;
@@ -310,6 +378,12 @@ public class ParkModel extends GridWorldModel {
 			return true;
 		}
 		// Now we it narrowed down to check wether the cell has an obstacle
-		return hasObject(OBSTACLE, x, y);
+		for(Location loc : obstacleLocations){
+      if(loc.x == x && loc.y == y){
+        return true;
+      }
+    }
+
+    return false;
 	}
 }
