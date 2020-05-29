@@ -115,7 +115,7 @@ public class ParkModel extends GridWorldModel {
 				// TODO: Add more
 				add(ParkModel.OBSTACLE, new Location(1, 1));
 				add(ParkModel.OBSTACLE, new Location(2, 0));
-				add(ParkModel.OBSTACLE, new Location(7, 1));
+				add(ParkModel.OBSTACLE, new Location(7, 0));
 
 		    int t =0;
 		    while(garbageLoc.size()!=5)
@@ -207,15 +207,15 @@ public class ParkModel extends GridWorldModel {
 		Location r1 = getAgPos(ind);
 		boolean flip = agentDir.get(ind-typeCount);
 		boolean returning = agentIsReturning.get(ind-typeCount);
+		//boolean hasBeenModified = false;
 
-		int tmp = isNextBlocked(flip, ind, xmax, xmin);
-		System.out.println("Tmpm:" +tmp + "Postition:" + r1 + "Am i flipped:" + flip + "Counter" + agentDodgeCounter.get(ind-typeCount));
+		int tmp = isNextBlocked(flip,returning, ind, xmax, xmin);
+		
 		if(tmp != -1 || agentDodgeCounter.get(ind-typeCount)>0) {
 			if(agentDodgeCounter.get(ind-typeCount) == 2) {agentDodgeCounter.set(ind-typeCount,-1);agentIsDodging.set(ind-typeCount,0);}
 			if(agentDodgeCounter.get(ind-typeCount) == 0) {agentIsDodging.set(ind-typeCount,tmp);}
-			System.out.println("Switchn�l " + agentDodgeCounter.get(ind-typeCount));
 			switch(agentIsDodging.get(ind-typeCount)) {
-			case 1://jobb sz�len alatta obstacle
+			case 1://jobb boundary alatta obstacle
 				if(agentDodgeCounter.get(ind-typeCount)<1) {
 				r1.x--;
 				r1.y++;
@@ -223,10 +223,9 @@ public class ParkModel extends GridWorldModel {
 				if(!agentDir.get(ind-typeCount)) {
 					agentDir.set(ind-typeCount, true);
 				}
-				//System.out.println("BReaking down");
 				break;
-			case 2://jobbra megy �s k�vi az obstacle
-				if(r1.x+2 != xmax) {
+			case 2://jobbra megy next az obstacle
+				if(r1.x+2 < xmax) {
 					r1.x++;
 					if(r1.y < 1 ) {
 						r1.y++;
@@ -238,11 +237,18 @@ public class ParkModel extends GridWorldModel {
 					}
 				}
 				else {
-					r1.x++;
-					r1.y++;
+					if(agentDodgeCounter.get(ind-typeCount)<1) {
+						r1.x++;
+						r1.y++;
+					}
+					if(!agentDir.get(ind-typeCount)) {
+							agentDir.set(ind-typeCount, true);
+							break;
+						}
+					
 					break;
 				}
-			case 3://balon van �s alatta obstacle
+			case 3://balon boundary alatta obstacle
 				if(agentDodgeCounter.get(ind-typeCount)<1) {
 					r1.x++;
 					r1.y++;
@@ -251,8 +257,8 @@ public class ParkModel extends GridWorldModel {
 					agentDir.set(ind-typeCount, false);
 				}
 				break;
-			case 4://balra megy �s k�vi obstacle
-				if(r1.x+2 != xmin) {
+			case 4://balra megy next obstacle
+				if(r1.x-2 > xmin) {
 					r1.x--;
 					if(r1.y < 1 ) {
 						r1.y++;
@@ -264,15 +270,33 @@ public class ParkModel extends GridWorldModel {
 					}
 				}
 				else {
+					if(agentDodgeCounter.get(ind-typeCount)<1) {
+						r1.x--;
+						r1.y++;
+						}
+					if(agentDir.get(ind-typeCount)) {
+							agentDir.set(ind-typeCount, false);
+						}
+					break;
+				}
+			case 5://upwards next is obst
+				if(r1.y-2 != 0) {
+					r1.x++;
+					r1.y--;
+					break;
+				}
+				else {
 					r1.x--;
-					r1.y++;
+					r1.y--;
 					break;
 				}
 			}
 			agentDodgeCounter.set(ind-typeCount,agentDodgeCounter.get(ind-typeCount)+1);
 		}
-
-		 if((agentDodgeCounter.get(ind-typeCount)== 0 && r1.x == xmax && r1.y == GSize-1 && !returning) || (returning)) {
+		/*if(r1.x != getAgPos(ind).x || r1.y != getAgPos(ind).y) {
+			hasBeenModified = true;
+		}*/
+		if((agentDodgeCounter.get(ind-typeCount)== 0 && r1.x == xmax && r1.y == GSize-1 && !returning) || (returning)) {
 			agentIsReturning.set(ind-typeCount,true);
 			if(r1.x == xmin && r1.y == 0) {
 				agentIsReturning.set(ind-typeCount,false);
@@ -284,7 +308,7 @@ public class ParkModel extends GridWorldModel {
 		else if(agentDodgeCounter.get(ind-typeCount)== 0 && !flip && r1.x < xmax) {r1.x++;}
 		else if(agentDodgeCounter.get(ind-typeCount)== 0 && flip && r1.x > xmin) { r1.x--;}
 		else if(agentDodgeCounter.get(ind-typeCount)== 0 && flip && r1.x == xmin && r1.y<GSize-1) {agentDir.set(ind-typeCount, false); r1.y++;}
-		else if(r1.x == xmax) {
+		else if(r1.x == xmax/* && !hasBeenModified*/ && agentDodgeCounter.get(ind-typeCount)== 0) {
 			agentDir.set(ind-typeCount, true);
 			r1.y++;
 		}
@@ -292,9 +316,17 @@ public class ParkModel extends GridWorldModel {
 		setAgPos(ind, r1);
 	}
 	
-	int isNextBlocked(boolean f, int ind, int max, int min) {
+	int isNextBlocked(boolean f,boolean r, int ind, int max, int min) {
 		Location r1 = getAgPos(ind);
-		if(!f) {
+		if(r) {
+			if(hasObject(OBSTACLE, new Location(--r1.x,r1.y))) {
+				return 4;
+			}
+			else if(hasObject(OBSTACLE, new Location(r1.x,--r1.y))) {
+				return 5;
+			}
+		}
+		else if(!f) {
 			if(r1.x == max) {
 				if(hasObject(OBSTACLE, new Location(r1.x,++r1.y))) {
 					return 1;
