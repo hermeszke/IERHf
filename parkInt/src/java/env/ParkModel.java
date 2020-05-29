@@ -20,7 +20,6 @@ public class ParkModel extends GridWorldModel {
     private static int maxGarbage = 10;
     private static int typeCount = 3;
 
-
     public static final int MErr = 2; // max error in pick garb
     int nerr; // number of tries of pick garb
 
@@ -32,13 +31,14 @@ public class ParkModel extends GridWorldModel {
 	ArrayList<Boolean> agentDir = new ArrayList<Boolean>();
 	ArrayList<Boolean> agentIsReturning = new ArrayList<Boolean>();
 	ArrayList<Integer> agentCarries = new ArrayList<Integer>();
+	ArrayList<Integer> agentIsDodging = new ArrayList<Integer>();
+	ArrayList<Integer> agentDodgeCounter = new ArrayList<Integer>();
 
     private int randomNumX;
     private int randomNumY;
+    private boolean dodge = false;
 
     public int cntr;
-
-    private static final SecureRandom random = new SecureRandom();
 
 	protected ParkModel() {
 		super(GSize, GSize,agentCount);
@@ -68,6 +68,8 @@ public class ParkModel extends GridWorldModel {
 	    	agentNameWNum.add(s.concat(Integer.toString(vcCnt)));
 	    	agentDir.add(false);
 	    	agentIsReturning.add(false);
+	    	agentIsDodging.add(-1);
+	    	agentDodgeCounter.add(0);
 	    	agentCarries.add(0);
 	    	vcCnt++;
 
@@ -78,6 +80,8 @@ public class ParkModel extends GridWorldModel {
 	    	agentNameWNum.add(s.concat(Integer.toString(vcCnt)));
 	    	agentDir.add(false);
 	    	agentIsReturning.add(false);
+	    	agentIsDodging.add(-1);
+	    	agentDodgeCounter.add(0);
 	    	agentCarries.add(0);
 	    	vcCnt++;
 
@@ -88,6 +92,8 @@ public class ParkModel extends GridWorldModel {
 	    	agentNameWNum.add(s.concat(Integer.toString(vcCnt)));
 	    	agentDir.add(false);
 	    	agentIsReturning.add(false);
+	    	agentIsDodging.add(-1);
+	    	agentDodgeCounter.add(0);
 	    	agentCarries.add(0);
 	    	vcCnt++;
 
@@ -107,7 +113,7 @@ public class ParkModel extends GridWorldModel {
 
 				// Set some obstacles
 				// TODO: Add more
-				add(ParkModel.OBSTACLE, new Location(5, 6));
+				add(ParkModel.OBSTACLE, new Location(1, 1));
 
 		    int t =0;
 		    while(garbageLoc.size()!=5)
@@ -151,11 +157,6 @@ public class ParkModel extends GridWorldModel {
 			setAgPos(7, temp);
 			loc.add(temp);
 	}
-
-	public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
-        int x = random.nextInt(clazz.getEnumConstants().length);
-        return clazz.getEnumConstants()[x];
-    }
 	
 	public void reInstate() {
 		Location tmp0 = getAgPos(0);
@@ -202,30 +203,110 @@ public class ParkModel extends GridWorldModel {
 
 	void moveBetween(int xmin, int xmax, int ind) {
 		Location r1 = getAgPos(ind);
-		boolean flip = agentDir.get(ind-3);
-		boolean returning = agentIsReturning.get(ind-3);
-		if(r1.x == xmin && r1.y ==0) {
-			agentDir.set(ind-3, false);
-			agentIsReturning.set(ind-3,false);
+		boolean flip = agentDir.get(ind-typeCount);
+		boolean returning = agentIsReturning.get(ind-typeCount);
+		/*if(r1.x == xmin && r1.y ==0 && returning) {
+			agentDir.set(ind-typeCount, false);
+			agentIsReturning.set(ind-typeCount,false);
+		}*/
+
+		int tmp = isNextBlocked(flip, ind, xmax, xmin);
+		System.out.println(tmp);
+		System.out.println("Tmpm:" +tmp + "Postition:" + r1 + "Am i flipped:" + flip + "Counter" + agentDodgeCounter.get(ind-typeCount));
+		if(tmp != -1 || agentDodgeCounter.get(ind-typeCount)>0) {
+			if(agentDodgeCounter.get(ind-typeCount) == 2) {agentDodgeCounter.set(ind-typeCount,-1);agentIsDodging.set(ind-typeCount,0);}
+			if(agentDodgeCounter.get(ind-typeCount) == 0) {agentIsDodging.set(ind-typeCount,tmp);}
+			
+			switch(agentIsDodging.get(ind-typeCount)) {
+			case 1://jobb szélen alatta obstacle
+				r1.x--;
+				r1.y++;
+			case 2://jobbra megy és kövi az obstacle
+				if(r1.x+2 != xmax) {
+					r1.x++;
+					if(r1.y < 1 ) {
+						r1.y++;
+					}
+					else {
+						r1.y--;
+					}
+				}
+				else {
+					r1.x++;
+					r1.y++;
+				}
+				
+			case 3://balon van és alatta obstacle
+				r1.y++;
+				r1.x++;
+				
+			case 4://balra megy és kövi obstacle
+				if(r1.x+2 != xmin) {
+					r1.x--;
+					if(r1.y < 1 ) {
+						r1.y++;
+					}
+					else {
+						r1.y--;
+					}
+				}
+				else {
+					r1.x--;
+					r1.y++;
+				}
+				
+			}
+			agentDodgeCounter.set(ind-typeCount,agentDodgeCounter.get(ind-typeCount)+1);
 		}
-		if((r1.x == xmax && r1.y == GSize-1 && !returning) || (returning)) {
-			agentIsReturning.set(ind-3,true);
+		
+		 if((agentDodgeCounter.get(ind-typeCount)== 0 && r1.x == xmax && r1.y == GSize-1 && !returning) || (returning)) {
+			agentIsReturning.set(ind-typeCount,true);
 			if(r1.x == xmin && r1.y == 0) {
-				agentIsReturning.set(ind-3,false);
-				agentDir.set(ind-3, false);
+				agentIsReturning.set(ind-typeCount,false);
+				agentDir.set(ind-typeCount, false);
 			}
 			else if(r1.x > xmin) r1.x--;
 			else if(r1.y > 0 ) r1.y--;
 		}
-		else if(!flip && r1.x < xmax) r1.x++;
-		else if(flip && r1.x > xmin) r1.x--;
-		else if(flip && r1.x == xmin && r1.y<GSize-1) {agentDir.set(ind-3, false); r1.y++;}
+		else if(agentDodgeCounter.get(ind-typeCount)== 0 && !flip && r1.x < xmax) r1.x++;
+		else if(agentDodgeCounter.get(ind-typeCount)== 0 && flip && r1.x > xmin) r1.x--;
+		else if(agentDodgeCounter.get(ind-typeCount)== 0 && flip && r1.x == xmin && r1.y<GSize-1) {agentDir.set(ind-typeCount, false); r1.y++;}
 		else {
-			agentDir.set(ind-3, true);
+			agentDir.set(ind-typeCount, true);
 			r1.y++;
 		}
+		
+		
 		setAgPos(ind, r1);
 	}
+	
+	int isNextBlocked(boolean f, int ind, int max, int min) {
+		Location r1 = getAgPos(ind);
+		if(!f) {
+			if(r1.x == max) {
+				if(hasObject(OBSTACLE, new Location(r1.x,++r1.y))) {
+					return 1;
+				}
+				return -1;
+			}
+			else if(hasObject(OBSTACLE, new Location(++r1.x,r1.y))) {
+				return 2;
+			}
+		}
+		else if(f) {
+			if(r1.x == min) {
+				if(hasObject(OBSTACLE, new Location(r1.x,++r1.y))) {
+					return 3;
+				}
+				return -1;
+			}
+			else if(hasObject(OBSTACLE, new Location(--r1.x,r1.y))) {
+				return 4;
+			}
+		}
+		return -1;
+	}
+	
 	void pickGarb(int ind) {
 		Location l = getAgPos(ind);
         if (hasObject(METAL, l)) {

@@ -1,4 +1,3 @@
-// Agent human in project parkInt.mas2j
 
 /* Initial goals */
 !visit_park.
