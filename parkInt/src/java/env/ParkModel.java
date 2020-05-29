@@ -159,10 +159,6 @@ public class ParkModel extends GridWorldModel {
 			loc.add(temp);
 	}
 
-	public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
-        int x = random.nextInt(clazz.getEnumConstants().length);
-        return clazz.getEnumConstants()[x];
-    }
 
 	public void reInstate() {
 		Location tmp0 = getAgPos(0);
