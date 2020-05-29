@@ -33,14 +33,13 @@ public class ParkModel extends GridWorldModel {
 	ArrayList<Boolean> agentDir = new ArrayList<Boolean>();
 	ArrayList<Boolean> agentIsReturning = new ArrayList<Boolean>();
 	ArrayList<Integer> agentCarries = new ArrayList<Integer>();
-  List<Location> obstacleLocations = new ArrayList<>();
-  List<Location> shouldBeAt = new ArrayList<>();
+	List<Location> obstacleLocations = new ArrayList<Location>();
+	List<Location> shouldBeAt = new ArrayList<Location>();
 	ArrayList<Integer> agentIsDodging = new ArrayList<Integer>();
 	ArrayList<Integer> agentDodgeCounter = new ArrayList<Integer>();
 
     private int randomNumX;
     private int randomNumY;
-    private boolean dodge = false;
 
     public int cntr;
 
@@ -67,7 +66,7 @@ public class ParkModel extends GridWorldModel {
 
 		    temp = new Location(0,0);
 		    setAgPos(3,temp);
-        shouldBeAt.add(temp);
+		    shouldBeAt.add(temp);
 		    loc.add(temp);
 	    	String s = "vacuumAgent";
 	    	agentNameWNum.add(s.concat(Integer.toString(vcCnt)));
@@ -80,7 +79,7 @@ public class ParkModel extends GridWorldModel {
 
 		    temp = new Location(8,0);
 		    setAgPos(4,temp);
-        shouldBeAt.add(temp);
+		    shouldBeAt.add(temp);
 		    loc.add(temp);
 	    	s = "vacuumAgent";
 	    	agentNameWNum.add(s.concat(Integer.toString(vcCnt)));
@@ -93,7 +92,7 @@ public class ParkModel extends GridWorldModel {
 
 		    temp = new Location(16,0);
 		    setAgPos(5,temp);
-        shouldBeAt.add(temp);
+		    shouldBeAt.add(temp);
 		    loc.add(temp);
 	    	s = "vacuumAgent";
 	    	agentNameWNum.add(s.concat(Integer.toString(vcCnt)));
@@ -118,15 +117,11 @@ public class ParkModel extends GridWorldModel {
 	    	garbType.add(ParkModel.PAPER);
 	    	add(ParkModel.PAPER,new Location(16,4));
 
-				// Set some obstacles
-				// TODO: Add more
-				add(ParkModel.OBSTACLE, new Location(1, 1));
-				add(ParkModel.OBSTACLE, new Location(2, 0));
-				add(ParkModel.OBSTACLE, new Location(7, 0));
-				addObstacle(2, 1);
-        addObstacle(1, 1);
-        addObstacle(2, 0);
-        addObstacle(7, 1);
+			// Set some obstacles
+			// TODO: Add more
+			add(ParkModel.OBSTACLE, new Location(1, 1));
+			add(ParkModel.OBSTACLE, new Location(2, 0));
+			add(ParkModel.OBSTACLE, new Location(7, 0));
 
 		    int t =0;
 		    while(garbageLoc.size()!=5)
@@ -256,27 +251,28 @@ public class ParkModel extends GridWorldModel {
 		}
 	}
 
-  private Location getShouldBeAt(int id){
-    return shouldBeAt.get(id - 3);
-  }
+	private Location getShouldBeAt(int id){
+	    return shouldBeAt.get(id - 3);
+	  }
 
 	void moveBetween(int xmin, int xmax, int ind) {
-		Location r1 = getAgPos(ind);
-    Location sr1 = getShouldBeAt(ind);
-    if(r1.x != sr1.x || r1.y != sr1.y){
-      r1.x = sr1.x;
-      r1.y = sr1.y;
-    }
-    Location startingLocation = getAgPos(ind);
-		boolean flip = agentDir.get(ind-3);
-		boolean returning = agentIsReturning.get(ind-3);
-		if(r1.x == xmin && r1.y ==0) {
-			agentDir.set(ind-3, false);
-			agentIsReturning.set(ind-3,false);
+
 		boolean flip = agentDir.get(ind-typeCount);
 		boolean returning = agentIsReturning.get(ind-typeCount);
-		//boolean hasBeenModified = false;
-
+	
+		Location r1 = getAgPos(ind);
+		Location sr1 = getShouldBeAt(ind);
+		
+		/*if(r1.x != sr1.x || r1.y != sr1.y){
+			r1.x = sr1.x;
+			r1.y = sr1.y;
+		}
+		Location startingLocation = getAgPos(ind);
+		if(r1.x == xmin && r1.y ==0) {
+			agentDir.set(ind-typeCount, false);
+			agentIsReturning.set(ind-typeCount,false);
+		}*/
+		
 		int tmp = isNextBlocked(flip,returning, ind, xmax, xmin);
 		
 		if(tmp != -1 || agentDodgeCounter.get(ind-typeCount)>0) {
@@ -361,9 +357,6 @@ public class ParkModel extends GridWorldModel {
 			}
 			agentDodgeCounter.set(ind-typeCount,agentDodgeCounter.get(ind-typeCount)+1);
 		}
-		/*if(r1.x != getAgPos(ind).x || r1.y != getAgPos(ind).y) {
-			hasBeenModified = true;
-		}*/
 		if((agentDodgeCounter.get(ind-typeCount)== 0 && r1.x == xmax && r1.y == GSize-1 && !returning) || (returning)) {
 			agentIsReturning.set(ind-typeCount,true);
 			if(r1.x == xmin && r1.y == 0) {
@@ -380,9 +373,9 @@ public class ParkModel extends GridWorldModel {
 			agentDir.set(ind-typeCount, true);
 			r1.y++;
 		}
-    shouldBeAt.set(ind - 3, new Location(r1.x, r1.y));
+   /* shouldBeAt.set(ind - 3, new Location(r1.x, r1.y));
     r1 = dodgeIfOccupied(r1, startingLocation);
-    Location asd = getShouldBeAt(ind);
+    Location asd = getShouldBeAt(ind);*/
 		setAgPos(ind, r1);
 	}
 	
