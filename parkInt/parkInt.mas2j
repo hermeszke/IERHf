@@ -7,6 +7,8 @@ MAS domestic_robot {
 			plasticDump;
 			paperDump;
 			vacuumAgent #3;
+			human;
     aslSourcePath:
 		"src/asl";
+
 }
