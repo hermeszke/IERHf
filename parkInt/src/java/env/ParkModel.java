@@ -134,17 +134,16 @@ public class ParkModel extends GridWorldModel {
 				    	add(ParkModel.METAL,temp);
 			    	}
 			    }
-			    
+
 		    }
-		    
+
 		  //Human
-		    
 			temp = new Location(3, 4);
 			s = "human";
 	    	agentNameWNum.add(s.concat(Integer.toString(1)));
 			setAgPos(6, temp);
 			loc.add(temp);
-			
+
 			temp = new Location(4, 7);
 			s = "human";
 	    	agentNameWNum.add(s.concat(Integer.toString(2)));
@@ -156,7 +155,7 @@ public class ParkModel extends GridWorldModel {
         int x = random.nextInt(clazz.getEnumConstants().length);
         return clazz.getEnumConstants()[x];
     }
-	
+
 	public void reInstate() {
 		Location tmp0 = getAgPos(0);
 		Location tmp1 = getAgPos(1);
@@ -175,7 +174,7 @@ public class ParkModel extends GridWorldModel {
 		setAgPos(5, tmp5);
 		setAgPos(6, tmp6);
 		setAgPos(7, tmp7);
-		
+
 		view.repaint();
 	}
 
@@ -300,5 +299,17 @@ public class ParkModel extends GridWorldModel {
 			return PAPER;
 		}
 		return -1;
+	}
+
+  // A cell is occupied if there is an obstacle or a vacum cleaner or a human
+	public boolean isOccupied(int x, int y){
+		int ag = getAgAtPos(x, y);
+		// If there is no agent, variable ag is now -1
+		// The IDs 0, 1, and 2 are for garbage bins. These do not occupy the cell
+		if(ag > 2){
+			return true;
+		}
+		// Now we it narrowed down to check wether the cell has an obstacle
+		return hasObject(OBSTACLE, x, y);
 	}
 }
