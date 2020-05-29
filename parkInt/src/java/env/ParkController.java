@@ -61,7 +61,7 @@ public class ParkController extends Environment{
 	        addPercept("vacuumAgent1",pos3);
 	        addPercept("vacuumAgent2",pos4);
 	        addPercept("vacuumAgent3",pos5);
-	        
+
 	        int tmp = model.isThisGarbage(vacuumAgent1);
 	        if(tmp != -1) {
                 vc1gb = Literal.parseLiteral("found("+tmp+")");
@@ -180,8 +180,8 @@ public class ParkController extends Environment{
 				 else if(action.getFunctor().equals(generateDest)){
 					 // Might change the place they want to go
 					 int r = rand.nextInt(10);
-					 if(r < 3){
-						 int x = rand.nextInt(model.GSize);
+					 if(r < 4){
+						 int x = rand.nextInt(model.GSize - 1) + 1;
 						 int y = rand.nextInt(model.GSize);
 
 						 logger.info(String.format("I decided that I want to go to %d : %d", x, y));

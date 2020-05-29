@@ -142,24 +142,28 @@ public class ParkModel extends GridWorldModel {
 				    	add(ParkModel.METAL,temp);
 			    	}
 			    }
-			    
+
 		    }
-		    
+
 		  //Human
-		    
 			temp = new Location(3, 4);
 			s = "human";
 	    	agentNameWNum.add(s.concat(Integer.toString(1)));
 			setAgPos(6, temp);
 			loc.add(temp);
-			
+
 			temp = new Location(4, 7);
 			s = "human";
 	    	agentNameWNum.add(s.concat(Integer.toString(2)));
 			setAgPos(7, temp);
 			loc.add(temp);
 	}
-	
+
+	public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
+        int x = random.nextInt(clazz.getEnumConstants().length);
+        return clazz.getEnumConstants()[x];
+    }
+
 	public void reInstate() {
 		Location tmp0 = getAgPos(0);
 		Location tmp1 = getAgPos(1);
@@ -178,7 +182,7 @@ public class ParkModel extends GridWorldModel {
 		setAgPos(5, tmp5);
 		setAgPos(6, tmp6);
 		setAgPos(7, tmp7);
-		
+
 		view.repaint();
 	}
 
@@ -213,9 +217,9 @@ public class ParkModel extends GridWorldModel {
 		if(tmp != -1 || agentDodgeCounter.get(ind-typeCount)>0) {
 			if(agentDodgeCounter.get(ind-typeCount) == 2) {agentDodgeCounter.set(ind-typeCount,-1);agentIsDodging.set(ind-typeCount,0);}
 			if(agentDodgeCounter.get(ind-typeCount) == 0) {agentIsDodging.set(ind-typeCount,tmp);}
-			System.out.println("Switchnél " + agentDodgeCounter.get(ind-typeCount));
+			System.out.println("Switchnï¿½l " + agentDodgeCounter.get(ind-typeCount));
 			switch(agentIsDodging.get(ind-typeCount)) {
-			case 1://jobb szélen alatta obstacle
+			case 1://jobb szï¿½len alatta obstacle
 				if(agentDodgeCounter.get(ind-typeCount)<1) {
 				r1.x--;
 				r1.y++;
@@ -225,7 +229,7 @@ public class ParkModel extends GridWorldModel {
 				}
 				//System.out.println("BReaking down");
 				break;
-			case 2://jobbra megy és kövi az obstacle
+			case 2://jobbra megy ï¿½s kï¿½vi az obstacle
 				if(r1.x+2 != xmax) {
 					r1.x++;
 					if(r1.y < 1 ) {
@@ -242,7 +246,7 @@ public class ParkModel extends GridWorldModel {
 					r1.y++;
 					break;
 				}
-			case 3://balon van és alatta obstacle
+			case 3://balon van ï¿½s alatta obstacle
 				if(agentDodgeCounter.get(ind-typeCount)<1) {
 					r1.x++;
 					r1.y++;
@@ -251,7 +255,7 @@ public class ParkModel extends GridWorldModel {
 					agentDir.set(ind-typeCount, false);
 				}
 				break;
-			case 4://balra megy és kövi obstacle
+			case 4://balra megy ï¿½s kï¿½vi obstacle
 				if(r1.x+2 != xmin) {
 					r1.x--;
 					if(r1.y < 1 ) {
@@ -393,5 +397,17 @@ public class ParkModel extends GridWorldModel {
 			return PAPER;
 		}
 		return -1;
+	}
+
+  // A cell is occupied if there is an obstacle or a vacum cleaner or a human
+	public boolean isOccupied(int x, int y){
+		int ag = getAgAtPos(x, y);
+		// If there is no agent, variable ag is now -1
+		// The IDs 0, 1, and 2 are for garbage bins. These do not occupy the cell
+		if(ag > 2){
+			return true;
+		}
+		// Now we it narrowed down to check wether the cell has an obstacle
+		return hasObject(OBSTACLE, x, y);
 	}
 }
