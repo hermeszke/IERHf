@@ -32,12 +32,12 @@ checking_cells.
  +!check_for_garbage
    :  not found(R)
    <- move_to(next_cell).
-   
+
  +!stop_checking : true
    <- ?my_pos(X,Y);
       +pos(back,X,Y);
       -checking_cells.
-      
+
  +!take(R,B) : true
    <- pickUp(R);
       !go(B);
