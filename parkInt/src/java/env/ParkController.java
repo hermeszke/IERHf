@@ -49,7 +49,8 @@ public class ParkController extends Environment{
 	    	clearPercepts("vacuumAgent1");
 	    	clearPercepts("vacuumAgent2");
 	    	clearPercepts("vacuumAgent3");
-				clearPercepts("human");
+				clearPercepts("human1");
+				clearPercepts("human2");
 
 	        Location metalAg = model.getAgPos(0);
 	        Location plastAg = model.getAgPos(1);
@@ -66,6 +67,7 @@ public class ParkController extends Environment{
 	        addPercept("vacuumAgent1",pos3);
 	        addPercept("vacuumAgent2",pos4);
 	        addPercept("vacuumAgent3",pos5);
+	        
 	        int tmp = model.isThisGarbage(vacuumAgent1);
 	        if(tmp != -1) {
                 vc1gb = Literal.parseLiteral("found("+tmp+")");
@@ -114,15 +116,12 @@ public class ParkController extends Environment{
 	    	 }
 	    	 else if(action.getFunctor().equals(mr)) {
 	             if(ag.equals("vacuumAgent1")) {
-	            	// model.removeGarbage(model.getAgentByName(ag));
 	            	 model.pickGarb(model.getAgentByName(ag));
 	             }
 	             else if(ag.equals("vacuumAgent2")) {
-	            	// model.removeGarbage(model.getAgentByName(ag));
 	            	 model.pickGarb(model.getAgentByName(ag));
 
 	             } else if(ag.equals("vacuumAgent3")) {
-	            	// model.removeGarbage(model.getAgentByName(ag));
 	            	 model.pickGarb(model.getAgentByName(ag));
 	             }
 	    	}
@@ -162,12 +161,13 @@ public class ParkController extends Environment{
 	    	 }
 				 else if(action.getFunctor().equals(walk)){
 					 // Humans is just walking towars their destination
-					 model.moveTowards(humanDestination.x, humanDestination.y, HUMAN_ID);
+					 model.moveTowards(humanDestination.x, humanDestination.y, model.getAgentByName(ag));
 				 }
 				 else if(action.getFunctor().equals(mightLitter)){
 					 // Humans might drop their garbage
 					 int r = rand.nextInt(10);
-					 if(r < 1){
+					 Location humanLoc = model.getAgPos(model.getAgentByName(ag));
+					 	 if(r < 1 && !(model.hasObject(16, humanLoc) || model.hasObject(32, humanLoc) || model.hasObject(64, humanLoc))){
 						 logger.info("Hahaha GARBAGE goes puff");
 						 int chooser = rand.nextInt(3);
 						 int type;
@@ -183,7 +183,6 @@ public class ParkController extends Environment{
 								break;
 						 }
 
-						 Location humanLoc = model.getAgPos(HUMAN_ID);
 						 model.add(type, humanLoc);
 					 }
 				 }

@@ -36,8 +36,9 @@ public class ParkView extends GridWorldView {
 				}
     }
 
-		public void drawObstacle(Graphics g, int x, int y) {
+	public void drawObstacle(Graphics g, int x, int y) {
 			Color treeColor = new Color(83, 53, 10);
+			g.setColor(treeColor);
 			super.drawAgent(g, x, y, treeColor, -1);
 		}
 
@@ -79,10 +80,14 @@ public class ParkView extends GridWorldView {
             g.setColor(Color.black);
             super.drawString(g, x, y, defaultFont, "Pa");
         	break;
-				case 6: // Human
-					c = new Color(240, 184, 160); // Some kind of skin color
-					super.drawAgent(g, x, y, c, -1);
-					break;
+		case 6: // Human
+			c = new Color(240, 184, 160); // Some kind of skin color
+			super.drawAgent(g, x, y, c, -1);
+			break;
+		case 7: // Human
+			c = new Color(240, 184, 160); // Some kind of skin color
+			super.drawAgent(g, x, y, c, -1);
+			break;
 	    default:
 	    	c = Color.black;
 	        super.drawAgent(g, x, y, c, -1);

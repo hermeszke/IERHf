@@ -14,9 +14,9 @@ public class ParkModel extends GridWorldModel {
     public static final int METAL = 16;
     public static final int PLAST = 64;
     public static final int PAPER = 32;
-		public static final int OBSTACLE = 256;
+	public static final int OBSTACLE = 256;
 
-    private static int agentCount = 7;
+    private static int agentCount = 8;
     private static int maxGarbage = 10;
     private static int typeCount = 3;
 
@@ -58,10 +58,6 @@ public class ParkModel extends GridWorldModel {
 			temp = new Location(0,24);
 		    setAgPos(2,temp);
 		    loc.add(temp);
-
-			temp = new Location(3, 4);
-			setAgPos(6, temp);
-			loc.add(temp);
 
 		    //Cleaners
 
@@ -138,13 +134,29 @@ public class ParkModel extends GridWorldModel {
 				    	add(ParkModel.METAL,temp);
 			    	}
 			    }
+			    
 		    }
+		    
+		  //Human
+		    
+			temp = new Location(3, 4);
+			s = "human";
+	    	agentNameWNum.add(s.concat(Integer.toString(1)));
+			setAgPos(6, temp);
+			loc.add(temp);
+			
+			temp = new Location(4, 7);
+			s = "human";
+	    	agentNameWNum.add(s.concat(Integer.toString(2)));
+			setAgPos(7, temp);
+			loc.add(temp);
 	}
 
 	public static <T extends Enum<?>> T randomEnum(Class<T> clazz){
         int x = random.nextInt(clazz.getEnumConstants().length);
         return clazz.getEnumConstants()[x];
     }
+	
 	public void reInstate() {
 		Location tmp0 = getAgPos(0);
 		Location tmp1 = getAgPos(1);
@@ -152,6 +164,8 @@ public class ParkModel extends GridWorldModel {
 		Location tmp3 = getAgPos(3);
 		Location tmp4 = getAgPos(4);
 		Location tmp5 = getAgPos(5);
+		Location tmp6 = getAgPos(6);
+		Location tmp7 = getAgPos(7);
 
 		setAgPos(0, tmp0);
 		setAgPos(1, tmp1);
@@ -159,6 +173,9 @@ public class ParkModel extends GridWorldModel {
 		setAgPos(3, tmp3);
 		setAgPos(4, tmp4);
 		setAgPos(5, tmp5);
+		setAgPos(6, tmp6);
+		setAgPos(7, tmp7);
+		
 		view.repaint();
 	}
 
@@ -213,16 +230,16 @@ public class ParkModel extends GridWorldModel {
 		Location l = getAgPos(ind);
         if (hasObject(METAL, l)) {
                 remove(METAL, l);
-    	    	agentCarries.set(ind-3,METAL);
+    	    	agentCarries.set(ind-typeCount,METAL);
         }
         else if(hasObject(PAPER, l))
         {
                 remove(PAPER, l);
-    	    	agentCarries.set(ind-3,PAPER);
+    	    	agentCarries.set(ind-typeCount,PAPER);
         }
         else if( hasObject(PLAST, l)) {
                 remove(PLAST, l);
-    	    	agentCarries.set(ind-3,PLAST);
+    	    	agentCarries.set(ind-typeCount,PLAST);
         }
     }
 
@@ -248,25 +265,25 @@ public class ParkModel extends GridWorldModel {
 
 	void dropGarbage(int ind) {
 		Location l = getAgPos(ind);
-		int check = agentCarries.get(ind-3);
+		int check = agentCarries.get(ind-typeCount);
 		if(loc.contains(l)) {
 			if(check == METAL) {
 				if(loc.get(0) == l) {
 					add(METAL,l);
-	    	    	agentCarries.set(ind-3,0);
+	    	    	agentCarries.set(ind-typeCount,0);
 
 				}
 			}
 			else if(check == METAL) {
 				if(loc.get(2) == l) {
 					add(PAPER,l);
-	    	    	agentCarries.set(ind-3,0);
+	    	    	agentCarries.set(ind-typeCount,0);
 				}
 			}
 			else if(check == METAL) {
 				if(loc.get(1) == l) {
 					add(PLAST,l);
-	    	    	agentCarries.set(ind-3,0);
+	    	    	agentCarries.set(ind-typeCount,0);
 				}
 			}
 		}
